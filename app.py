@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-
+from utils import polynomial_to_latex
 
 st.title("Regressão por Mínimos Quadrados")
 
@@ -45,13 +45,13 @@ with col1:
     st.write("#### Valores reais")
     st.write(rf"$\beta_0 = {beta_true[0]:.4f}$")
     st.write(rf"$\beta_1 = {beta_true[1]:.4f}$")
-    st.write(rf"$y = {beta_true[0]:.4f} + {beta_true[1]:.4f}x$")
+    st.write(polynomial_to_latex(beta_true))
 
 with col2:
     st.write("#### Valores estimados")
     st.write(rf"$\beta_0 = {beta_pred[0]:.4f}$")
     st.write(rf"$\beta_1 = {beta_pred[1]:.4f}$")
-    st.write(rf"$\hat{{y}} = {beta_pred[0]:.4f} + {beta_pred[1]:.4f}x$")
+    st.write(polynomial_to_latex(beta_pred, hat=True))
 
 
 # visualização do gráfico
