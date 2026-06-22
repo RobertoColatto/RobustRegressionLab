@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 
-def imported_data_page():
+def imported_data_source():
     st.header("Dataset importado")
 
     uploaded_file = st.file_uploader("Selecione um arquivo CSV", type="csv")
