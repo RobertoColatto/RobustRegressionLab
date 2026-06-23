@@ -17,7 +17,7 @@ if "regression_method" not in st.session_state:
 titles = {
     "OLS": "Regressão por Mínimos Quadrados",
     "OLS Trimming": "Regressão por Mínimos Quadrados com Trimming",
-    "SR3 Trimming": "Regressão por bla bla bla"
+    "SR3 Trimming": "Regressão Regularizada Relaxada Esparsa (SR3) com Trimming"
 }
 
 st.title(titles[st.session_state.regression_method])

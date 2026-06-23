@@ -6,7 +6,7 @@ import numpy as np
 def prox_l1(v, Lambda):
     return np.sign(v) * np.maximum(np.abs(v) - Lambda, 0.0)
 
-def sr3_trimming(X, y, beta=0.1, Lambda=0.1, nu=1.0,
+def sr3_trimming(X, y, beta=0.0005, Lambda=0.1, nu=1.0,
                  epsilon=1e-6, max_iter=1000):
 
     n, d = X.shape
