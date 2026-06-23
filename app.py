@@ -73,7 +73,7 @@ if x is not None and y is not None:
         elif regression_method == "OLS Trimming":
             y_pred, beta_pred, _ = ols_trimming.polynomial_fit(data_source, x, y, beta_true)
         elif regression_method == "SR3 Trimming":
-            y_pred, beta_pred, _ = sr3_trimming.polynomial_fit(data_source, x, y, beta_true)
+            y_pred, beta_pred, _, _ = sr3_trimming.polynomial_fit(data_source, x, y, beta_true)
 
     elif model_type == "Exponencial":
         if regression_method == "OLS":
