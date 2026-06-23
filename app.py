@@ -6,6 +6,8 @@ from data_sources.synthetic_data import synthetic_data_source
 from data_sources.imported_data import imported_data_source
 
 import models.ols as ols
+import models.sr3 as sr3
+import models.huber as huber
 import models.ols_trimming as ols_trimming
 import models.sr3_trimming as sr3_trimming
 
@@ -16,6 +18,8 @@ if "regression_method" not in st.session_state:
 
 titles = {
     "OLS": "Regressão por Mínimos Quadrados",
+    "SR3": "Regressão Regularizada Relaxada Esparsa (SR3)",
+    "Huber": "Regressão de Huber",
     "OLS Trimming": "Regressão por Mínimos Quadrados com Trimming",
     "SR3 Trimming": "Regressão Regularizada Relaxada Esparsa (SR3) com Trimming"
 }
@@ -70,6 +74,10 @@ if x is not None and y is not None:
     if model_type == "Polinomial":
         if regression_method == "OLS":
             y_pred, beta_pred = ols.polynomial_fit(data_source, x, y, beta_true)
+        elif regression_method == "SR3":
+            y_pred, beta_pred, _ = sr3.polynomial_fit(data_source, x, y, beta_true)
+        elif regression_method == "Huber":
+            y_pred, beta_pred = huber.polynomial_fit(data_source, x, y, beta_true)
         elif regression_method == "OLS Trimming":
             y_pred, beta_pred, _ = ols_trimming.polynomial_fit(data_source, x, y, beta_true)
         elif regression_method == "SR3 Trimming":
@@ -78,6 +86,10 @@ if x is not None and y is not None:
     elif model_type == "Exponencial":
         if regression_method == "OLS":
             y_pred, beta_pred = ols.exponential_fit(x, y)
+        elif regression_method == "SR3":
+            y_pred, beta_pred, _ = sr3.exponential_fit(x, y)
+        elif regression_method == "Huber":
+            y_pred, beta_pred = huber.exponential_fit(x, y)
         elif regression_method == "OLS Trimming":
             y_pred, beta_pred, _ = ols_trimming.exponential_fit(x, y)
         elif regression_method == "SR3 Trimming":
@@ -86,6 +98,10 @@ if x is not None and y is not None:
     elif model_type == "Logarítmica":
         if regression_method == "OLS":
             y_pred, beta_pred = ols.logarithmic_fit(x, y)
+        elif regression_method == "SR3":
+            y_pred, beta_pred, _ = sr3.logarithmic_fit(x, y)
+        elif regression_method == "Huber":
+            y_pred, beta_pred = huber.logarithmic_fit(x, y)
         elif regression_method == "OLS Trimming":
             y_pred, beta_pred, _ = ols_trimming.logarithmic_fit(x, y)
         elif regression_method == "SR3 Trimming":
@@ -94,6 +110,10 @@ if x is not None and y is not None:
     elif model_type == "Potência":
         if regression_method == "OLS":
             y_pred, beta_pred = ols.power_fit(x, y)
+        elif regression_method == "SR3":
+            y_pred, beta_pred, _ = sr3.power_fit(x, y)
+        elif regression_method == "Huber":
+            y_pred, beta_pred = huber.power_fit(x, y)
         elif regression_method == "OLS Trimming":
             y_pred, beta_pred, _ = ols_trimming.power_fit(x, y)
         elif regression_method == "SR3 Trimming":
@@ -116,6 +136,8 @@ st.sidebar.selectbox(
     "Estimador",
     (
         "OLS",
+        "SR3",
+        "Huber",
         "OLS Trimming",
         "SR3 Trimming"
     ),

@@ -2,49 +2,34 @@ import streamlit as st
 import numpy as np
 
 
-# Implementação do algoritmo SR3 com Trimming
+#Implementação do algortimo SR3 básico
 def prox_l1(v, Lambda):
     return np.sign(v) * np.maximum(np.abs(v) - Lambda, 0.0)
 
-def sr3_trimming(X, y, beta=0.0005, Lambda=0.1, nu=1.0, epsilon=1e-6, max_iter=1000):
-
+def sr3(X, X_hat, Lambda=0.1, nu=1.0, epsilon=1e-6, max_iter=1000):
     n, d = X.shape
 
     k = 0
     err = 2 * epsilon
-
     W = np.zeros(d)
-    v = np.ones(n)
 
     while err > epsilon and k < max_iter:
         k += 1
 
-        V = np.diag(v)
-
-        # Atualizando Xi
-        A = X.T @ V @ X + (1 / nu) * np.eye(d)
-        b = X.T @ V @ y + (1 / nu) * W
-
+        #Atualizando Xi
+        A = (X.T @ X + (1/nu) * np.eye(d))
+        b = X.T @ X_hat + (1/nu) * W
         Xi = np.linalg.solve(A, b)
 
-        # Atualizando W
+        #Atualizando W
         W_new = prox_l1(Xi, Lambda * nu)
 
-        # Atualizando v
-        residuals = (y - X @ Xi) ** 2
+        #Atualizano o erro
+        err = np.linalg.norm(W_new - W) / nu
 
-        v_new = v - beta * residuals
-        v_new = np.clip(v_new, 0, 1)
+        W = W_new
 
-        # Critério de parada
-        err = (
-            np.linalg.norm(W_new - W) / nu
-            + np.linalg.norm(v_new - v) / beta
-        )
-
-        W, v = W_new, v_new
-
-    return Xi, W, v
+    return Xi, W
 
 
 def polynomial_fit(data_source, x, y, beta_true):
@@ -57,13 +42,13 @@ def polynomial_fit(data_source, x, y, beta_true):
 
     X = np.column_stack([x**i for i in range(degree + 1)])
 
-    Xi, W, v = sr3_trimming(X, y)
+    Xi, W = sr3(X, y)
 
     beta_pred = Xi
 
     y_pred = X @ beta_pred
 
-    return y_pred, beta_pred, W, v
+    return y_pred, beta_pred, W
 
 
 def exponential_fit(x, y):
@@ -76,7 +61,7 @@ def exponential_fit(x, y):
 
     X = np.column_stack((np.ones_like(x), x))
 
-    Xi, W, v = sr3_trimming(X, Y)
+    Xi, W = sr3(X, Y)
 
     alpha, beta1 = Xi
     beta0 = np.exp(alpha)
@@ -85,7 +70,7 @@ def exponential_fit(x, y):
 
     y_pred = beta0 * np.exp(beta1 * x)
 
-    return y_pred, beta_pred, W, v
+    return y_pred, beta_pred, W
 
 
 def logarithmic_fit(x, y):
@@ -96,13 +81,13 @@ def logarithmic_fit(x, y):
 
     X = np.column_stack((np.ones_like(x), np.log(x)))
 
-    Xi, W, v = sr3_trimming(X, y)
+    Xi, W = sr3(X, y)
 
     beta_pred = Xi
 
     y_pred = X @ beta_pred
 
-    return y_pred, beta_pred, W, v
+    return y_pred, beta_pred, W
 
 
 def power_fit(x, y):
@@ -115,7 +100,7 @@ def power_fit(x, y):
 
     X = np.column_stack((np.ones_like(x), np.log(x)))
 
-    Xi, W, v = sr3_trimming(X, Y)
+    Xi, W = sr3(X, Y)
 
     alpha, beta1 = Xi
     beta0 = np.exp(alpha)
@@ -124,4 +109,4 @@ def power_fit(x, y):
 
     y_pred = beta0 * x**beta1
 
-    return y_pred, beta_pred, W, v
+    return y_pred, beta_pred, W
