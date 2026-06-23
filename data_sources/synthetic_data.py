@@ -93,10 +93,29 @@ def synthetic_data_source():
 
     if use_outliers:
         n_outliers = st.sidebar.slider("Número de outliers", 1, min(20, n_points), 5)
-        outlier_std = st.sidebar.slider("Intensidade dos outliers", 1.0, 100.0, 20.0)
+
+        outlier_std = st.sidebar.slider("Intensidade dos outliers", 1.0, 100.0,20.0)
+
+        outlier_direction = st.sidebar.selectbox(
+            "Direção dos outliers",
+            (
+                "Ambos",
+                "Acima",
+                "Abaixo"
+            )
+        )
 
         outlier_idx = rng.choice(n_points, n_outliers, replace=False)
-        y[outlier_idx] += rng.normal(0, outlier_std, n_outliers)
+
+        shifts = rng.normal(0, outlier_std, n_outliers)
+
+        if outlier_direction == "Acima":
+            shifts = np.abs(shifts)
+
+        elif outlier_direction == "Abaixo":
+            shifts = -np.abs(shifts)
+
+        y[outlier_idx] += shifts
 
 
     return x, y, beta_true, outlier_idx, model_type
