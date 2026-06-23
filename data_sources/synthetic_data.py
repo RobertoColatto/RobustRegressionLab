@@ -3,6 +3,8 @@ import numpy as np
 
 
 def synthetic_data_source():
+    rng = np.random.default_rng(42)
+
     st.header("Dados sintéticos")
 
 
@@ -80,7 +82,7 @@ def synthetic_data_source():
         y_true = beta0 * x**beta1
 
 
-    y = y_true + np.random.normal(0, noise, n_points)
+    y = y_true + rng.normal(0, noise, n_points)
 
 
     # outliers
@@ -93,8 +95,8 @@ def synthetic_data_source():
         n_outliers = st.sidebar.slider("Número de outliers", 1, min(20, n_points), 5)
         outlier_std = st.sidebar.slider("Intensidade dos outliers", 1.0, 100.0, 20.0)
 
-        outlier_idx = np.random.choice(n_points, n_outliers, replace=False)
-        y[outlier_idx] += np.random.normal(0, outlier_std, n_outliers)
+        outlier_idx = rng.choice(n_points, n_outliers, replace=False)
+        y[outlier_idx] += rng.normal(0, outlier_std, n_outliers)
 
 
     return x, y, beta_true, outlier_idx, model_type

@@ -4,11 +4,23 @@ import matplotlib.pyplot as plt
 
 from data_sources.synthetic_data import synthetic_data_source
 from data_sources.imported_data import imported_data_source
-from models.ols import *
+
+import models.ols as ols
+import models.ols_trimming as ols_trimming
+import models.sr3_trimming as sr3_trimming
+
 from plots.result_plot import *
 
+if "regression_method" not in st.session_state:
+    st.session_state.regression_method = "OLS"
 
-st.title("Regressão por Mínimos Quadrados")
+titles = {
+    "OLS": "Regressão por Mínimos Quadrados",
+    "OLS Trimming": "Regressão por Mínimos Quadrados com Trimming",
+    "SR3 Trimming": "Regressão por bla bla bla"
+}
+
+st.title(titles[st.session_state.regression_method])
 
 
 # escolher fonte dos dados
@@ -51,19 +63,41 @@ if x is not None and y is not None:
             )
         )
 
+    regression_method = st.session_state.regression_method
+
 
     # ols_fit
     if model_type == "Polinomial":
-        y_pred, beta_pred = polynomial_fit(data_source, x, y, beta_true)
+        if regression_method == "OLS":
+            y_pred, beta_pred = ols.polynomial_fit(data_source, x, y, beta_true)
+        elif regression_method == "OLS Trimming":
+            y_pred, beta_pred, _ = ols_trimming.polynomial_fit(data_source, x, y, beta_true)
+        elif regression_method == "SR3 Trimming":
+            y_pred, beta_pred, _ = sr3_trimming.polynomial_fit(data_source, x, y, beta_true)
 
     elif model_type == "Exponencial":
-        y_pred, beta_pred = exponential_fit(x, y)
+        if regression_method == "OLS":
+            y_pred, beta_pred = ols.exponential_fit(x, y)
+        elif regression_method == "OLS Trimming":
+            y_pred, beta_pred, _ = ols_trimming.exponential_fit(x, y)
+        elif regression_method == "SR3 Trimming":
+            y_pred, beta_pred, _, _ = sr3_trimming.exponential_fit(x, y)
 
     elif model_type == "Logarítmica":
-        y_pred, beta_pred = logarithmic_fit(x, y)
+        if regression_method == "OLS":
+            y_pred, beta_pred = ols.logarithmic_fit(x, y)
+        elif regression_method == "OLS Trimming":
+            y_pred, beta_pred, _ = ols_trimming.logarithmic_fit(x, y)
+        elif regression_method == "SR3 Trimming":
+            y_pred, beta_pred, _, _ = sr3_trimming.logarithmic_fit(x, y)
 
     elif model_type == "Potência":
-        y_pred, beta_pred = power_fit(x, y)
+        if regression_method == "OLS":
+            y_pred, beta_pred = ols.power_fit(x, y)
+        elif regression_method == "OLS Trimming":
+            y_pred, beta_pred, _ = ols_trimming.power_fit(x, y)
+        elif regression_method == "SR3 Trimming":
+            y_pred, beta_pred, _, _ = sr3_trimming.power_fit(x, y)
 
 
     # exibir resultados
@@ -74,3 +108,16 @@ if x is not None and y is not None:
         imported_data_result_plot(beta_pred)
 
     graphic_plot(x, y, y_pred)
+
+
+st.sidebar.header("Método de regressão")
+
+st.sidebar.selectbox(
+    "Estimador",
+    (
+        "OLS",
+        "OLS Trimming",
+        "SR3 Trimming"
+    ),
+    key="regression_method"
+)

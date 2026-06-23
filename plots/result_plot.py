@@ -36,6 +36,6 @@ def graphic_plot(x, y, y_pred):
 
     fig, ax = plt.subplots()
     ax.scatter(x, y, label="Dados")
-    ax.plot(x_sorted, y_pred_sorted, color="green", linewidth=3, label="Regressão")
+    ax.plot(x_sorted, y_pred_sorted, color="red", linewidth=3, label="Regressão")
     ax.legend()
     st.pyplot(fig)
